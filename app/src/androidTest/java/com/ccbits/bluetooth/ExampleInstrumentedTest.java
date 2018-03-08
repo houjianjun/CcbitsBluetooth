@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 /**
- * Instrumentation test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * 日期：2018/3/8-18:58
+ * 作者：侯建军
+ * 功能：单元测试
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
