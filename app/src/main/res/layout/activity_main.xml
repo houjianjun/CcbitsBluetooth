@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="30dp"
     tools:context="com.ccbits.bluetooth.MainActivity">
     <!--摇杆控件-->
     <com.ccbits.bluetooth.view.RockerView
@@ -12,7 +11,12 @@
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="47dp"
         app:areaBackground="@drawable/default_area_bg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:rockerBackground="@drawable/default_rocker_bg"
         app:rockerRadius="30dp" />
     <!--显示遥杆-->
@@ -20,8 +24,146 @@
         android:id="@+id/rocker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/rockerView"
         app:layout_constraintHorizontal_bias="0.3"
-        android:layout_above="@id/rockerView" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+    <!--蓝牙调试-->
+    <Button
+        android:id="@+id/btnSearchBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="78dp"
+        android:text="搜索蓝牙"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btnDebugBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:text="蓝牙调试"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="100dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="22dp"
+        android:showText="true"
+        android:text="D3"
+        android:textOff="关"
+        android:textOn="开"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rockerView" />
+
+    <TextView
+        android:id="@+id/txtSwitch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="25dp"
+        android:text="D3"
+        app:layout_constraintLeft_toRightOf="@+id/switch1"
+        app:layout_constraintTop_toBottomOf="@+id/rockerView" />
+
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="100dp"
+        android:layout_height="27dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="12dp"
+        android:showText="true"
+        android:text="D13"
+        android:textOff="关"
+        android:textOn="开"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+    <TextView
+        android:id="@+id/txtSwitch2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="15dp"
+        android:text="D13"
+        app:layout_constraintLeft_toRightOf="@+id/switch2"
+        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+    <TextView
+        android:id="@+id/txtA0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="70dp"
+        android:text="A0:无"
+        app:layout_constraintLeft_toRightOf="@+id/rockerView"
+        app:layout_constraintTop_toBottomOf="@+id/bluetoothDevices" />
+
+    <TextView
+        android:id="@+id/txtA1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="57dp"
+        android:layout_marginTop="70dp"
+        android:text="A1:无"
+        app:layout_constraintLeft_toRightOf="@+id/txtA0"
+        app:layout_constraintTop_toBottomOf="@+id/bluetoothDevices" />
+
+    <TextView
+        android:id="@+id/txtA2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="24dp"
+        android:text="A2:无"
+        app:layout_constraintLeft_toRightOf="@+id/rockerView"
+        app:layout_constraintTop_toBottomOf="@+id/txtA0" />
+
+    <TextView
+        android:id="@+id/txtA3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="57dp"
+        android:layout_marginTop="24dp"
+        android:text="A3:无"
+        app:layout_constraintLeft_toRightOf="@+id/txtA2"
+        app:layout_constraintTop_toBottomOf="@+id/txtA1" />
+
+    <TextView
+        android:id="@+id/txtA4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="27dp"
+        android:text="A4:无"
+        app:layout_constraintLeft_toRightOf="@+id/rockerView"
+        app:layout_constraintTop_toBottomOf="@+id/txtA2" />
+
+    <TextView
+        android:id="@+id/txtA5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="57dp"
+        android:layout_marginTop="27dp"
+        android:text="A5:无"
+        app:layout_constraintLeft_toRightOf="@+id/txtA4"
+        app:layout_constraintTop_toBottomOf="@+id/txtA3" />
+
+    <ListView
+        android:id="@+id/bluetoothDevices"
+        android:layout_width="360dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="208dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/list_border"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
