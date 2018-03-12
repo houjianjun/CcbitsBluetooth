@@ -28,17 +28,6 @@
         app:layout_constraintHorizontal_bias="0.3"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
-    <!--蓝牙调试-->
-    <Button
-        android:id="@+id/btnSearchBlue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="78dp"
-        android:text="搜索蓝牙"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnDebugBlue"
@@ -49,6 +38,27 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:text="蓝牙调试"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!--蓝牙连接-->
+    <Button
+        android:id="@+id/btnConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="78dp"
+        android:text="蓝牙连接"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/btnSearchBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="138dp"
+        android:text="搜索蓝牙"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,6 +97,7 @@
         android:textOn="开"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/switch1" />
+
     <TextView
         android:id="@+id/txtSwitch2"
         android:layout_width="wrap_content"
@@ -96,6 +107,25 @@
         android:text="D13"
         app:layout_constraintLeft_toRightOf="@+id/switch2"
         app:layout_constraintTop_toBottomOf="@+id/switch1" />
+
+    <TextView
+        android:id="@+id/txtDeviceType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="6dp"
+        android:text="传统蓝牙"
+        app:layout_constraintLeft_toRightOf="@+id/rockerView"
+        app:layout_constraintTop_toBottomOf="@+id/bluetoothDevices" />
+    <TextView
+        android:id="@+id/txtDeviceInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="10dp"
+        android:text="设备：无"
+        app:layout_constraintLeft_toRightOf="@+id/rockerView"
+        app:layout_constraintTop_toBottomOf="@+id/txtDeviceType" />
     <TextView
         android:id="@+id/txtA0"
         android:layout_width="wrap_content"
