@@ -33,9 +33,11 @@
         android:layout_height="80dp"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="6dp"
+        android:scrollbars="vertical"
         android:background="@android:drawable/edit_text"
-        android:focusable="false"
         android:ems="10"
+        android:textSize="12sp"
+        android:focusable="false"
         android:inputType="textMultiLine"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labSend" />
@@ -60,18 +62,21 @@
         android:text="接收数据："
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtSendData" />
+
     <EditText
         android:id="@+id/txtReviceData"
         android:layout_width="297dp"
         android:layout_height="80dp"
-        android:layout_marginTop="6dp"
         android:layout_marginLeft="30dp"
-        android:focusable="false"
+        android:layout_marginTop="6dp"
         android:background="@android:drawable/edit_text"
         android:ems="10"
+        android:focusable="false"
         android:inputType="textMultiLine"
-        app:layout_constraintTop_toBottomOf="@+id/labReceive"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:scrollbars="vertical"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labReceive" />
     <Button
         android:id="@+id/btnClearReceiveData"
         android:layout_width="wrap_content"
@@ -87,7 +92,7 @@
         android:layout_width="208dp"
         android:layout_height="46dp"
         android:ems="10"
-        android:inputType="textMultiLine"
+        android:maxLines="1"
         android:layout_marginTop="6dp"
         android:layout_marginLeft="30dp"
         app:layout_constraintTop_toBottomOf="@+id/txtReviceData"

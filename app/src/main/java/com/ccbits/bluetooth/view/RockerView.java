@@ -242,8 +242,8 @@ public class RockerView extends View {
             mAreaBackgroundPaint.setColor(mAreaColor);
             canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, mAreaRadius, mAreaBackgroundPaint);
         } else {
-            // 其他或者未设置
-            mAreaBackgroundPaint.setColor(Color.GRAY);
+            // 其他或者未设置，大圆Color.GRAY
+            mAreaBackgroundPaint.setColor(Color.parseColor("#CCCC33"));
             canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, mAreaRadius, mAreaBackgroundPaint);
         }
 
@@ -258,8 +258,8 @@ public class RockerView extends View {
             mRockerPaint.setColor(mRockerColor);
             canvas.drawCircle(mRockerPosition.x, mRockerPosition.y, mRockerRadius, mRockerPaint);
         } else {
-            // 其他或者未设置
-            mRockerPaint.setColor(Color.RED);
+            // 其他或者未设置,中间小圆Color.RED
+            mRockerPaint.setColor(Color.parseColor("#993399"));
             canvas.drawCircle(mRockerPosition.x, mRockerPosition.y, mRockerRadius, mRockerPaint);
         }
     }

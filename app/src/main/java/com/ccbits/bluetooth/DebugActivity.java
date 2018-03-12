@@ -2,8 +2,10 @@ package com.ccbits.bluetooth;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,8 +22,8 @@ public class DebugActivity extends AppCompatActivity {
     //清空发送数据
     private Button btnClearSendData;
     private Button btnClearReviceData;
-    public static StringBuffer sendDataStr=new StringBuffer();
-    public static StringBuffer reviceDataStr=new StringBuffer();
+    public static StringBuffer sendDataStr = new StringBuffer();
+    public static StringBuffer reviceDataStr = new StringBuffer();
     //数据发送
     private EditText txtSend;
     private Button btnSend;
@@ -43,15 +45,18 @@ public class DebugActivity extends AppCompatActivity {
         //获取蓝牙服务对象
         message = intent.getStringExtra("address");
         txtDevice = (TextView) findViewById(R.id.txtDevice);
-
         txtDevice.setText("已连接设备：" + message);
 
         txtSendData = (EditText) findViewById(R.id.txtSendData);
-        txtReviceData=(EditText) findViewById(R.id.txtReviceData);
+        txtReviceData = (EditText) findViewById(R.id.txtReviceData);
+        txtSendData.setBackgroundColor(Color.parseColor("#9370DB"));
+        txtReviceData.setBackgroundColor(Color.parseColor("#9AFF9A"));
+
         btnClearSendData = (Button) findViewById(R.id.btnClearSendData);
         btnClearReviceData = (Button) findViewById(R.id.btnClearReceiveData);
 
         txtSend = (EditText) findViewById(R.id.txtSend);
+
         btnSend = (Button) findViewById(R.id.btnSend);
         btnClear = (Button) findViewById(R.id.btnClear);
         //发送数据清空
@@ -86,8 +91,10 @@ public class DebugActivity extends AppCompatActivity {
                     //数据发送
                     MainActivity.sendMessage(msg);
                     txtSend.setText("");
-                    sendDataStr.append(msg+"\r\n");
+                    sendDataStr.append(msg + "\r\n");
                     txtSendData.setText(sendDataStr.toString());
+                    txtSendData.setMovementMethod(ScrollingMovementMethod.getInstance());
+                    txtSendData.setSelection(txtSendData.getText().length(), txtSendData.getText().length());
                 }
             }
         });
@@ -122,7 +129,7 @@ public class DebugActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(DebugActivity.this, MainActivity.class);
-        intent.putExtra("debug","debug");
+        intent.putExtra("debug", "debug");
         startActivity(intent);
         DebugActivity.this.finish();
     }

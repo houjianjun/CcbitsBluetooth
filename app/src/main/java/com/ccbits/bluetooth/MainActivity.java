@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -411,6 +412,8 @@ public class MainActivity extends AppCompatActivity {
             if(null!=DebugActivity.txtReviceData) {
                 DebugActivity.reviceDataStr.append(message+"\r\n");
                 DebugActivity.txtReviceData.setText(DebugActivity.reviceDataStr.toString());
+                DebugActivity.txtReviceData.setMovementMethod(ScrollingMovementMethod.getInstance());
+                DebugActivity.txtReviceData.setSelection( DebugActivity.txtReviceData.getText().length(),  DebugActivity.txtReviceData.getText().length());
             }
         }
     }
