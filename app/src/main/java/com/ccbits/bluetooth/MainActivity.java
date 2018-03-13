@@ -2,8 +2,10 @@ package com.ccbits.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnSearchBlue;
     //蓝牙连接
     private Button btnConnect;
+    //小车停止
+    private  Button btnStop;
     //数字开关控制
     private Switch switch1;
     private Switch switch2;
@@ -61,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private LeDeviceListAdapter mLeDeviceListAdapter;
 
     // 连接设备名称
-    private String mConnectedDeviceName = null;
+    private static String mConnectedDeviceName = null;
     //从blue牙签服务处理程序接收到的密钥名
     public static final String DEVICE_NAME = "device_name";
     //消息类型
@@ -95,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         A5 = (TextView) findViewById(R.id.txtA5);
 
         //开关控件
-         switch1=(Switch)findViewById(R.id.switch1);
-         switch2=(Switch)findViewById(R.id.switch2);
+        switch1 = (Switch) findViewById(R.id.switch1);
+        switch2 = (Switch) findViewById(R.id.switch2);
 
         txtDeviceType = (TextView) findViewById(R.id.txtDeviceType);
         txtDeviceInfo = (TextView) findViewById(R.id.txtDeviceInfo);
@@ -109,14 +113,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             txtDeviceType.setText("低功耗蓝牙");
         }
-        context=getApplication();
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) { //蓝牙未开启，则开启蓝牙
-            //打开蓝牙
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            //后台打开蓝牙，不做提示
-//            bluetoothAdapter.enable();
-        }
+        context = getApplication();
+        //
+        initBluetoothAdapter();
+
         mLeDeviceListAdapter = new LeDeviceListAdapter(this);
         //获取listview
         lvDevices = (ListView) findViewById(R.id.bluetoothDevices);
@@ -130,15 +130,22 @@ public class MainActivity extends AppCompatActivity {
         btnSearchBlue = (Button) findViewById(R.id.btnSearchBlue);
         //蓝牙连接
         btnConnect = (Button) findViewById(R.id.btnConnect);
+        //小车停止
+        btnStop=(Button) findViewById(R.id.btnStop);
+
+        // 注册广播接收器。接收蓝牙发现讯息
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
 
         //数字口开关
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    sendMessage("D3:1\r\n");
-                }else {
-                    sendMessage("D3:0\r\n");
+                //sendMessage("APT+SPP8888\n\r");
+                if (isChecked) {
+                    sendMessage("C:");
+                } else {
+                    sendMessage("D:");
                 }
             }
         });
@@ -147,10 +154,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked){
-                    sendMessage("D13:1\r\n");
-                }else {
-                    sendMessage("D13:0\r\n");
+                if (isChecked) {
+                    sendMessage("E:");
+                } else {
+                    sendMessage("F:");
                 }
             }
         });
@@ -165,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             btnDebug.setEnabled(true);
             btnConnect.setEnabled(true);
             btnConnect.setText("断开连接");
-            txtDeviceInfo.setText("设备：" + mBluetoothService.getmAdapter().getName() + "已连接");
+            txtDeviceInfo.setText("设备：" + mConnectedDeviceName + "已连接");
         }
         //连接设备
         lvDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -185,13 +192,19 @@ public class MainActivity extends AppCompatActivity {
                 mBluetoothService.connect(device);
             }
         });
-
+        //搜索蓝牙
         btnSearchBlue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                initBluetoothAdapter();
+                mBluetoothAdapter.startDiscovery();
+                if (mBluetoothAdapter.isDiscovering()) {
+                    txtDeviceInfo.setText("设备：扫描中……");
+                    mBluetoothAdapter.cancelDiscovery();
+                }
                 btnSearchBlue.setEnabled(false);
                 //设备扫描
-                ScanDevice();
+                //ScanDevice();
                 btnSearchBlue.setEnabled(true);
             }
         });
@@ -217,10 +230,17 @@ public class MainActivity extends AppCompatActivity {
                     btnConnect.setEnabled(false);
                     btnDebug.setEnabled(false);
                     txtDeviceInfo.setText("设备：断开");
+                    mBluetoothAdapter.disable();
                 }
             }
         });
 
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage("S:");
+            }
+        });
         //摇杆视图
         rocker = (TextView) findViewById(R.id.rocker);
         RockerView rockerView = (RockerView) findViewById(R.id.rockerView);
@@ -235,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
                     //开始
                     rocker.setText(null);
                 }
-
                 @Override
                 public void direction(RockerView.Direction direction) {
                     String dir = getDirection(direction);
@@ -264,6 +283,21 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+    @Override
+    public void onBackPressed() {
+       mBluetoothAdapter.disable();
+        System.exit(0);//正常退出App
+    }
+    private void initBluetoothAdapter() {
+        // 如果用户的设备没有开启蓝牙，则弹出开启蓝牙设备的对话框，让用户开启蓝牙
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            //打开蓝牙
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            //后台打开蓝牙，不做提示
+//            bluetoothAdapter.enable();
+        }
+    }
 
     /**
      * 功能：消息处理器
@@ -284,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
                     byte[] readBuf = (byte[]) msg.obj;
                     //将字节转为字符串
                     String message = new String(readBuf, 0, msg.arg1);
+                    Log.d("data1", message);
                     readMessage(message);
                     break;
                 case MESSAGE_DEVICE_NAME:
@@ -292,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
                     btnConnect.setText("断开连接");
                     btnConnect.setEnabled(true);
                     btnDebug.setEnabled(true);
+
                     Log.d(TAG, "MESSAGE_DEVICE_NAME " + msg);
                     break;
                 case MESSAGE_TOAST:
@@ -320,29 +356,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * 功能：摇杆数据发送
      */
     private String getDirection(RockerView.Direction direction) {
-        String message = null;
+        String message = "";
         switch (direction) {
             case DIRECTION_LEFT:
                 message = "左";
-                sendMessage("3");
+                sendMessage("L:");
                 break;
             case DIRECTION_RIGHT:
-                sendMessage("4");
+                sendMessage("R:");
                 message = "右";
                 break;
             case DIRECTION_UP:
                 message = "上";
                 //发送消息
-                sendMessage("1");
+                sendMessage("W:");
                 break;
             case DIRECTION_DOWN:
                 message = "下";
-                sendMessage("2");
+                sendMessage("B:");
                 break;
 //            case DIRECTION_UP_LEFT:
 //                message = "左上";
@@ -357,6 +392,8 @@ public class MainActivity extends AppCompatActivity {
 //                message = "右下";
 //                break;
             default:
+                message = "停";
+                sendMessage("S:");
                 break;
         }
         return message;
@@ -409,12 +446,32 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         } else {
-            if(null!=DebugActivity.txtReviceData) {
-                DebugActivity.reviceDataStr.append(message+"\r\n");
+            if (null != DebugActivity.txtReviceData) {
+                if( DebugActivity.reviceDataStr.length()>200){
+                    DebugActivity.reviceDataStr.setLength(0);
+                    DebugActivity.txtReviceData.setText("");
+                }
+                DebugActivity.reviceDataStr.append(message.replace("APT\\+SPP8888","").replace("791310","").replace("SPP8888","")+ "\r\n");
                 DebugActivity.txtReviceData.setText(DebugActivity.reviceDataStr.toString());
                 DebugActivity.txtReviceData.setMovementMethod(ScrollingMovementMethod.getInstance());
-                DebugActivity.txtReviceData.setSelection( DebugActivity.txtReviceData.getText().length(),  DebugActivity.txtReviceData.getText().length());
+                DebugActivity.txtReviceData.setSelection(DebugActivity.txtReviceData.getText().length(), DebugActivity.txtReviceData.getText().length());
             }
         }
     }
+
+    /**
+     * 功能：广播接收发现蓝牙设备
+     */
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                mLeDeviceListAdapter.addDevice(device);
+                mLeDeviceListAdapter.notifyDataSetChanged();
+            }
+            txtDeviceInfo.setText("设备：扫描完成。");
+        }
+    };
 }
