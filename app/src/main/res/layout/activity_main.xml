@@ -196,6 +196,28 @@
         app:layout_constraintLeft_toRightOf="@+id/txtA4"
         app:layout_constraintTop_toBottomOf="@+id/txtA3" />
 
+    <TextView
+        android:id="@+id/txtAnalog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="28dp"
+        android:text="模拟："
+        app:layout_constraintLeft_toRightOf="@+id/txtA5"
+        app:layout_constraintTop_toBottomOf="@+id/txtA3" />
+
+    <Switch
+        android:id="@+id/switchAnalog"
+        android:layout_width="100dp"
+        android:layout_height="27dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="22dp"
+        android:showText="true"
+        android:text="模拟"
+        android:textOff="关"
+        android:textOn="开"
+        app:layout_constraintLeft_toRightOf="@+id/txtAnalog"
+        app:layout_constraintTop_toBottomOf="@+id/txtA3" />
     <ListView
         android:id="@+id/bluetoothDevices"
         android:layout_width="360dp"

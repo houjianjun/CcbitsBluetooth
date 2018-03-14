@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     //蓝牙连接
     private Button btnConnect;
     //小车停止
-    private  Button btnStop;
+    private Button btnStop;
     //数字开关控制
     private Switch switch1;
     private Switch switch2;
@@ -82,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static Context context;
 
+    //模拟标志
+    private static boolean flagAnalog = false;
+    private  Switch switchAnalog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,9 +105,11 @@ public class MainActivity extends AppCompatActivity {
         //开关控件
         switch1 = (Switch) findViewById(R.id.switch1);
         switch2 = (Switch) findViewById(R.id.switch2);
+        switchAnalog = (Switch) findViewById(R.id.switchAnalog);
 
         txtDeviceType = (TextView) findViewById(R.id.txtDeviceType);
         txtDeviceInfo = (TextView) findViewById(R.id.txtDeviceInfo);
+
         //获取蓝牙适配器
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //判断设备是否支持ble
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         //蓝牙连接
         btnConnect = (Button) findViewById(R.id.btnConnect);
         //小车停止
-        btnStop=(Button) findViewById(R.id.btnStop);
+        btnStop = (Button) findViewById(R.id.btnStop);
 
         // 注册广播接收器。接收蓝牙发现讯息
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -155,9 +161,20 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-                    sendMessage("E:");
+                    sendMessage("G:");
                 } else {
                     sendMessage("F:");
+                }
+            }
+        });
+        //模拟开关
+        switchAnalog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    flagAnalog = true;
+                } else {
+                    flagAnalog = false;
                 }
             }
         });
@@ -230,15 +247,18 @@ public class MainActivity extends AppCompatActivity {
                     btnConnect.setEnabled(false);
                     btnDebug.setEnabled(false);
                     txtDeviceInfo.setText("设备：断开");
+                    //清除列表数据
+                    mLeDeviceListAdapter.clear();
+                    mLeDeviceListAdapter.notifyDataSetChanged();
                     mBluetoothAdapter.disable();
                 }
             }
         });
-
+        //小车停止
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage("S:");
+                sendMessage("N:");
             }
         });
         //摇杆视图
@@ -255,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
                     //开始
                     rocker.setText(null);
                 }
+
                 @Override
                 public void direction(RockerView.Direction direction) {
                     String dir = getDirection(direction);
@@ -283,11 +304,13 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
     @Override
     public void onBackPressed() {
-       mBluetoothAdapter.disable();
+        mBluetoothAdapter.disable();
         System.exit(0);//正常退出App
     }
+
     private void initBluetoothAdapter() {
         // 如果用户的设备没有开启蓝牙，则弹出开启蓝牙设备的对话框，让用户开启蓝牙
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
@@ -367,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
                 sendMessage("L:");
                 break;
             case DIRECTION_RIGHT:
-                sendMessage("R:");
+                sendMessage("H:");
                 message = "右";
                 break;
             case DIRECTION_UP:
@@ -377,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case DIRECTION_DOWN:
                 message = "下";
-                sendMessage("B:");
+                sendMessage("Q:");
                 break;
 //            case DIRECTION_UP_LEFT:
 //                message = "左上";
@@ -393,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
 //                break;
             default:
                 message = "停";
-                sendMessage("S:");
+                sendMessage("N:");
                 break;
         }
         return message;
@@ -421,37 +444,40 @@ public class MainActivity extends AppCompatActivity {
      * 功能：读取消息
      */
     private static void readMessage(String message) {
-        String[] strs = message.split(":");
-        if (null != strs && strs.length > 1) {
-            switch (strs[0]) {
-                case "A0":
-                    A0.setText("A0:" + strs[1]);
-                    break;
-                case "A1":
-                    A1.setText("A1:" + strs[1]);
-                    break;
-                case "A2":
-                    A2.setText("A2:" + strs[1]);
-                    break;
-                case "A3":
-                    A3.setText("A3:" + strs[1]);
-                    break;
-                case "A4":
-                    A4.setText("A4:" + strs[1]);
-                    break;
-                case "A5":
-                    A5.setText("A5:" + strs[1]);
-                    break;
-                default:
-                    break;
+        if (flagAnalog) {
+            Log.d("readAAA", message);
+            String[] strRevData = message.split(":");
+            if (null != strRevData && strRevData.length > 1) {
+                switch (strRevData[0]) {
+                    case "A0":
+                        A0.setText("A0:" + strRevData[1]);
+                        break;
+                    case "A1":
+                        A1.setText("A1:" + strRevData[1]);
+                        break;
+                    case "A2":
+                        A2.setText("A2:" + strRevData[1]);
+                        break;
+                    case "A3":
+                        A3.setText("A3:" + strRevData[1]);
+                        break;
+                    case "A4":
+                        A4.setText("A4:" + strRevData[1]);
+                        break;
+                    case "A5":
+                        A5.setText("A5:" + strRevData[1]);
+                        break;
+                    default:
+                        break;
+                }
             }
         } else {
             if (null != DebugActivity.txtReviceData) {
-                if( DebugActivity.reviceDataStr.length()>200){
+                if (DebugActivity.reviceDataStr.length() > 200) {
                     DebugActivity.reviceDataStr.setLength(0);
                     DebugActivity.txtReviceData.setText("");
                 }
-                DebugActivity.reviceDataStr.append(message.replace("APT\\+SPP8888","").replace("791310","").replace("SPP8888","")+ "\r\n");
+                DebugActivity.reviceDataStr.append(message.replace("APT\\+SPP8888", "").replace("791310", "").replace("SPP8888", "").trim() + "\r\n");
                 DebugActivity.txtReviceData.setText(DebugActivity.reviceDataStr.toString());
                 DebugActivity.txtReviceData.setMovementMethod(ScrollingMovementMethod.getInstance());
                 DebugActivity.txtReviceData.setSelection(DebugActivity.txtReviceData.getText().length(), DebugActivity.txtReviceData.getText().length());
