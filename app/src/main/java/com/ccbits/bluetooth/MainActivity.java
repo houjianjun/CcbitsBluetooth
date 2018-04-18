@@ -15,8 +15,8 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -37,13 +37,25 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtDeviceType;
     private TextView txtDeviceInfo;
     //蓝牙调试按钮
-    private Button btnDebug;
+    private ImageButton btnDebug;
     //蓝牙搜索按钮
-    private Button btnSearchBlue;
+    private ImageButton btnSearchBlue;
     //蓝牙连接
-    private Button btnConnect;
+    private ImageButton btnConnect;
+    private boolean connected=false;
+
     //小车停止
-    private Button btnStop;
+    private ImageButton btnStop;
+
+    //上一曲
+    private ImageButton btnPre;
+    //下一曲
+    private ImageButton btnNext;
+    //暂停
+    private ImageButton btnPause;
+    //播放
+    private boolean isPlayer=false;
+
     //数字开关控制
     private Switch switch1;
     private Switch switch2;
@@ -131,13 +143,13 @@ public class MainActivity extends AppCompatActivity {
         //扫描设备
         ScanDevice();
         //蓝牙调试
-        btnDebug = (Button) findViewById(R.id.btnDebugBlue);
+        btnDebug = (ImageButton) findViewById(R.id.btnDebugBlue);
         //蓝牙搜索
-        btnSearchBlue = (Button) findViewById(R.id.btnSearchBlue);
+        btnSearchBlue = (ImageButton) findViewById(R.id.btnSearchBlue);
         //蓝牙连接
-        btnConnect = (Button) findViewById(R.id.btnConnect);
+        btnConnect = (ImageButton) findViewById(R.id.btnConnect);
         //小车停止
-        btnStop = (Button) findViewById(R.id.btnStop);
+        btnStop = (ImageButton) findViewById(R.id.btnStop);
 
         // 注册广播接收器。接收蓝牙发现讯息
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -149,8 +161,10 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //sendMessage("APT+SPP8888\n\r");
                 if (isChecked) {
+                    switch1.setTrackResource(R.drawable.switch2);
                     sendMessage("C:");
                 } else {
+                    switch1.setTrackResource(R.drawable.switch1);
                     sendMessage("D:");
                 }
             }
@@ -159,10 +173,11 @@ public class MainActivity extends AppCompatActivity {
         switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                 if (isChecked) {
+                    switch2.setTrackResource(R.drawable.switch2);
                     sendMessage("G:");
                 } else {
+                    switch2.setTrackResource(R.drawable.switch1);
                     sendMessage("F:");
                 }
             }
@@ -172,8 +187,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    switchAnalog.setTrackResource(R.drawable.switch2);
                     flagAnalog = true;
                 } else {
+                    switchAnalog.setTrackResource(R.drawable.switch1);
                     flagAnalog = false;
                 }
             }
@@ -182,13 +199,23 @@ public class MainActivity extends AppCompatActivity {
         //获取蓝牙服务对象
         String debug = intent.getStringExtra("debug");
         if (debug == null) {
-            btnConnect.setEnabled(false);
+            btnConnect.setEnabled(true);
+            btnConnect.setImageResource(R.drawable.lylj);
+            connected=true;
+
             btnDebug.setEnabled(false);
+            btnDebug.setImageResource(R.drawable.lytsjy);
             mBluetoothService = new BluetoothService(this, mHandler);
         } else {
             btnDebug.setEnabled(true);
+            btnDebug.setImageResource(R.drawable.lyts);
+
             btnConnect.setEnabled(true);
-            btnConnect.setText("断开连接");
+            connected=true;
+            btnConnect.setImageResource(R.drawable.dklj);
+
+           // connected=true;
+          //  btnConnect.setText("断开连接");
             txtDeviceInfo.setText("设备：" + mConnectedDeviceName + "已连接");
         }
         //连接设备
@@ -242,10 +269,17 @@ public class MainActivity extends AppCompatActivity {
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (btnConnect.getText().equals("断开连接")) {
+//                btnConnect.setImageResource(R.drawable.dklj);
+
+                if (connected) {
                     mBluetoothService.stop();
+                    //必须通过列表进行连接
                     btnConnect.setEnabled(false);
+                    btnConnect.setImageResource(R.drawable.lylj);
+                    connected=false;
+
                     btnDebug.setEnabled(false);
+                    btnDebug.setImageResource(R.drawable.lytsjy);
                     txtDeviceInfo.setText("设备：断开");
                     //清除列表数据
                     mLeDeviceListAdapter.clear();
@@ -254,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         //小车停止
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -347,10 +382,16 @@ public class MainActivity extends AppCompatActivity {
                 case MESSAGE_DEVICE_NAME:
                     mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
                     txtDeviceInfo.setText("设备：" + mConnectedDeviceName + "已连接");
-                    btnConnect.setText("断开连接");
-                    btnConnect.setEnabled(true);
-                    btnDebug.setEnabled(true);
+//                    btnConnect.setText("断开连接");
+                    btnConnect.setImageResource(R.drawable.dklj);
 
+                    connected=true;
+                    btnConnect.setEnabled(true);
+
+                    btnDebug.setImageResource(R.drawable.lylj);
+
+                    btnDebug.setEnabled(true);
+                    btnDebug.setImageResource(R.drawable.lyts);
                     Log.d(TAG, "MESSAGE_DEVICE_NAME " + msg);
                     break;
                 case MESSAGE_TOAST:

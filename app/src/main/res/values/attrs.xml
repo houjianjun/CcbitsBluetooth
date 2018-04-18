@@ -2,7 +2,9 @@
 <!--属性配置-->
 <resources>
     <declare-styleable name="RockerView">
+        <!--areaBackground 设置区域背景-->
         <attr name="areaBackground" format="color|reference" />
+        <!--rockerBackground 设置摇杆的样式-->
         <attr name="rockerBackground" format="color|reference" />
         <attr name="rockerRadius" format="dimension" />
     </declare-styleable>

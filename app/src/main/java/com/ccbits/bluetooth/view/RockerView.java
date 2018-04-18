@@ -14,6 +14,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -211,11 +212,20 @@ public class RockerView extends View {
         Logger.i(TAG, "onMeasure: measureWidth = " + measureWidth + " measureHeight = " + measureHeight);
         setMeasuredDimension(measureWidth, measureHeight);
     }
-
+    int angle=0;
     @Override
     protected void onDraw(Canvas canvas) {
+//        canvas.rotate(angle,getWidth()/2,getWidth()/2);
+        //旋转
+        //上
+//        canvas.rotate(90,getWidth()/2,getWidth()/2);
+        //左
+//        canvas.rotate(0,getWidth()/2,getWidth()/2);
+        //右
+//        canvas.rotate(180,getWidth()/2,getWidth()/2);
+//下
+//        canvas.rotate(270,getWidth()/2,getWidth()/2);
         super.onDraw(canvas);
-
         int measuredWidth = getMeasuredWidth();
         int measuredHeight = getMeasuredHeight();
 
@@ -229,6 +239,7 @@ public class RockerView extends View {
         // 摇杆位置
         if (0 == mRockerPosition.x || 0 == mRockerPosition.y) {
             mRockerPosition.set(mCenterPoint.x, mCenterPoint.y);
+//            mRockerPosition.set(mCenterPoint.x/2, mCenterPoint.y);
         }
 
         // 画可移动区域
@@ -252,6 +263,7 @@ public class RockerView extends View {
             // 图片
             Rect src = new Rect(0, 0, mRockerBitmap.getWidth(), mRockerBitmap.getHeight());
             Rect dst = new Rect(mRockerPosition.x - mRockerRadius, mRockerPosition.y - mRockerRadius, mRockerPosition.x + mRockerRadius, mRockerPosition.y + mRockerRadius);
+
             canvas.drawBitmap(mRockerBitmap, src, dst, mRockerPaint);
         } else if (ROCKER_BACKGROUND_MODE_COLOR == mRockerBackgroundMode) {
             // 色值
@@ -273,8 +285,27 @@ public class RockerView extends View {
             case MotionEvent.ACTION_MOVE:// 移动
                 float moveX = event.getX();
                 float moveY = event.getY();
-                mRockerPosition = getRockerPositionPoint(mCenterPoint, new Point((int) moveX, (int) moveY), mAreaRadius, mRockerRadius);
+               mRockerPosition = getRockerPositionPoint(mCenterPoint, new Point((int) moveX, (int) moveY), mAreaRadius, mRockerRadius);
+                //改移动为旋转
                 moveRocker(mRockerPosition.x, mRockerPosition.y);
+                //获取角度
+//                float angle =(float) getRockerAngle(mCenterPoint, new Point((int) moveX, (int) moveY), mAreaRadius, mRockerRadius);
+                Log.d("aa",angle+"");
+                this.angle=(int)angle;
+//                if(angle<90&&angle>=0){
+//                    //右 0
+//                    this.angle=180;
+//                }else if(angle<180&&angle>=90){
+//                    //下 90
+//                    this.angle=270;
+//                }else if(angle<270&&angle>=180){
+//                    //左 180
+//                    this.angle=0;
+//                }else if(angle>270){
+//                    //上 270
+//                    this.angle=90;
+//                }
+//                invalidate();
                 break;
             case MotionEvent.ACTION_UP:// 抬起
             case MotionEvent.ACTION_CANCEL:// 移出区域
@@ -282,12 +313,33 @@ public class RockerView extends View {
                 callBackFinish();
                 float upX = event.getX();
                 float upY = event.getY();
+                //改移动为旋转
                 moveRocker(mCenterPoint.x, mCenterPoint.y);
                 Logger.i(TAG, "onTouchEvent: 抬起位置 : x = " + upX + " y = " + upY);
                 break;
         }
         return true;
     }
+
+    /**
+     * 日期：2018/4/17-8:19
+     * 作者：侯建军
+     * 功能：获取旋转角度
+     */
+    private double getRockerAngle(Point centerPoint, Point touchPoint, float regionRadius, float rockerRadius) {
+        // 两点在X轴的距离
+        float lenX = (float) (touchPoint.x - centerPoint.x);
+        // 两点在Y轴距离
+        float lenY = (float) (touchPoint.y - centerPoint.y);
+        // 两点距离
+        float lenXY = (float) Math.sqrt((double) (lenX * lenX + lenY * lenY));
+        // 计算弧度
+        double radian = Math.acos(lenX / lenXY) * (touchPoint.y < centerPoint.y ? -1 : 1);
+        // 计算角度
+        double angle = radian2Angle(radian);
+        return angle;
+    }
+
 
     /**
      * 获取摇杆实际要显示的位置（点）
